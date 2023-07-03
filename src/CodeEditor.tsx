@@ -1,39 +1,55 @@
-import React from 'react';
-import { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { basicSetup } from '@codemirror/basic-setup';
-import { EditorState } from '@codemirror/state';
+import { EditorState, Transaction } from '@codemirror/state';
 import { EditorView, keymap } from '@codemirror/view';
 import { defaultKeymap } from '@codemirror/commands';
 import { oneDark } from '@codemirror/theme-one-dark';
 
-function CodeEditor() {
-    const editorRef = useRef<HTMLDivElement>(null);
+interface CodeEditorProps {
+  onChange?: (content: string) => void;
+}
 
-    useEffect(() => {
-        if (!editorRef.current) return;
+function CodeEditor({ onChange }: CodeEditorProps) {
+  const editorRef = useRef<HTMLDivElement>(null);
 
-        const startState = EditorState.create({
-            doc: '// type your code here...',
-            extensions: [basicSetup, keymap.of(defaultKeymap), oneDark],
-        });
+  useEffect(() => {
+    if (!editorRef.current) return;
 
-        const view = new EditorView({
-            state: startState,
-            parent: editorRef.current,
-        });
+    const startState = EditorState.create({
+      doc: '// type your code here...',
+      extensions: [
+        basicSetup,
+        keymap.of(defaultKeymap),
+        oneDark,
+        EditorView.updateListener.of((update) => {
+          if (update.docChanged && onChange) {
+            onChange(update.state.doc.toString());
+          }
+        }),
+      ],
+    });
 
-        return () => {
-            view.destroy();
-        };
-    }, []);
+    const view = new EditorView({
+      state: startState,
+      parent: editorRef.current,
+    });
 
-    return <div ref={editorRef} 
-                className="cm-editor" 
-                style={{ 
-                  height: '100%', 
-                  display: 'grid', 
-                  backgroundColor: '#282c34' /* oneDark background color */ 
-                }} />;
+    return () => {
+      view.destroy();
+    };
+  }, [onChange]);
+
+  return (
+    <div
+      ref={editorRef}
+      className="cm-editor"
+      style={{
+        height: '100%',
+        display: 'grid',
+        backgroundColor: '#282c34', /* oneDark background color */
+      }}
+    />
+  );
 }
 
 export default CodeEditor;

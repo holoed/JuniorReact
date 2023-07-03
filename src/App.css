@@ -36,13 +36,21 @@
 }
 
 /* Change the background color of the gutter */
-.cm-editor .cm-gutter {
+.cm-editor .cm-gutter  {
   background-color: #555b68 !important; /* Set to your preferred color */
+}
+
+.cm-activeLineGutter {
+  background-color: #434752 !important; /* Set to your preferred color */
 }
 
 /* Change the color of the line numbers */
 .cm-editor .cm-lineNumbers .cm-gutterElement {
   color: #f8f8f2 !important; /* Set to your preferred color */
+}
+
+.cm-lineNumbers {
+  width: 30px; /* specify your desired width */
 }
 
 
