@@ -6,19 +6,12 @@ import './App.css';
 import CodeEditor from './CodeEditor';
 import { js as beautify } from 'js-beautify';
 import MenuBar from './MenuBar';
-
-// SecondPane component
-const SecondPane = ({ content }: any) => (
-  <div className="pane">
-    <h2>Compiled JS</h2>
-    <pre style={{ whiteSpace: 'pre-wrap' }}>{content}</pre>
-  </div>
-);
+import SecondPane from './SecondPane';
 
 function App() {
   const [output, setOutput] = useState('');
 
-  const onEditorChange = useCallback(async (content: string) => {
+  const onEditorChange = useCallback(async (content: any) => {
     const url = "http://localhost:5173/api/compileToJs";
 
     try {
