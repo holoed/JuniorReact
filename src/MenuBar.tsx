@@ -5,7 +5,7 @@ export default function MenuBar() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
 
-  const handleClick = (event) => {
+  const handleClick = (event : any) => {
     setAnchorEl(event.currentTarget);
   };
 
