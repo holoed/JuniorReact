@@ -9,7 +9,7 @@ const useStyles = makeStyles((theme) => ({
       borderBottom: '1px solid #000', // Add this line to create a bottom border for the AppBar
       height: '20px',
       '& .MuiTabs-root': {
-        minHeight: '46px',  // specify your desired height
+        minHeight: '21px',  // specify your desired height
       },
     },
     tab: {

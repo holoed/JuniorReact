@@ -3,10 +3,10 @@
 import React, { useState, useCallback } from 'react';
 import Split from 'react-split';
 import './App.css';
-import CodeEditor from './CodeEditor';
+import CodeEditor from './components/CodeEditor';
 import { js as beautify } from 'js-beautify';
-import MenuBar from './MenuBar';
-import SecondPane from './SecondPane';
+import MenuBar from './components/MenuBar';
+import SecondPane from './components/SecondPane';
 
 function App() {
   const [output, setOutput] = useState('');
