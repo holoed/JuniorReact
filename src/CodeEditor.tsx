@@ -4,6 +4,8 @@ import { EditorState, Transaction } from '@codemirror/state';
 import { EditorView, keymap } from '@codemirror/view';
 import { defaultKeymap } from '@codemirror/commands';
 import { oneDark } from '@codemirror/theme-one-dark';
+import {StreamLanguage} from "@codemirror/language"
+import {haskell} from "@codemirror/legacy-modes/mode/haskell"
 
 interface CodeEditorProps {
   onChange?: (content: string) => void;
@@ -16,11 +18,12 @@ function CodeEditor({ onChange }: CodeEditorProps) {
     if (!editorRef.current) return;
 
     const startState = EditorState.create({
-      doc: '// type your code here...',
+      doc: '',
       extensions: [
         basicSetup,
         keymap.of(defaultKeymap),
         oneDark,
+        StreamLanguage.define(haskell),
         EditorView.updateListener.of((update) => {
           if (update.docChanged && onChange) {
             onChange(update.state.doc.toString());
