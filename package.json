@@ -15,6 +15,8 @@
     "@codemirror/state": "^0.20.0",
     "@codemirror/theme-one-dark": "^0.20.0",
     "@codemirror/view": "^0.20.0",
+    "@material-ui/core": "^4.12.4",
+    "@material-ui/icons": "^4.11.3",
     "@types/js-beautify": "^1.13.3",
     "js-beautify": "^1.14.8",
     "react": "^16.14.0",
