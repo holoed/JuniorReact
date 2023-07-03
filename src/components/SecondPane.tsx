@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
 
 // add types for your props
 interface SecondPaneProps {
-    content: string; // add other types as needed
+    content: { js: string, ty: string, cp: string, out: string }; // add other types as needed
   }
 
 // SecondPane: the component that contains the tabbed interface
@@ -83,16 +83,16 @@ const SecondPane: React.FC<SecondPaneProps> = ({ content }) => {
         </Tabs>
       </AppBar>
       <TabPanel value={value} index={0}>
-        Item One
+        <pre>{content.ty}</pre>
       </TabPanel>
       <TabPanel value={value} index={1}>
-        Item Two
+        <pre>{content.cp}</pre>
       </TabPanel>
       <TabPanel value={value} index={2}>
-         <pre>{content}</pre>
+         <pre>{content.js}</pre>
       </TabPanel>
       <TabPanel value={value} index={3}>
-        Item Three
+         <pre>{content.out}</pre>
       </TabPanel>
     </div>
   );

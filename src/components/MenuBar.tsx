@@ -61,6 +61,12 @@ export default function MenuBar() {
         <Typography variant="h6" style={typographyStyle}>
           Edit
         </Typography>
+        <Typography variant="h6" style={typographyStyle}>
+          View
+        </Typography>
+        <Typography variant="h6" style={typographyStyle}>
+          Run
+        </Typography>
         {/* Repeat for additional top bar items */}
       </Toolbar>
     </AppBar>

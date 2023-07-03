@@ -8,29 +8,52 @@ import { js as beautify } from 'js-beautify';
 import MenuBar from './components/MenuBar';
 import SecondPane from './components/SecondPane';
 
+async function compileTo(target: string, content: string) {
+  const url = `api${target}`;
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST', 
+      headers: {
+        'Content-Type': 'text/plain',
+      },
+      body: content,
+    });
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('There has been a problem with your fetch operation:', error);
+  }
+}
+
+async function runJs(jsCode: string) {
+    const response = await fetch("api/libJs")
+    const libCodeJson = await response.text();
+    const script = "(function() {\n\n" + JSON.parse(libCodeJson) + 
+    "\n\n" + jsCode.replace("const main = ", "return ") + 
+    "\n\n})();"
+    const scriptBase64 = window.btoa(jsCode);
+    const ret = eval(`const codeBase64 = "${scriptBase64}";\n\n` + script);
+    return ret;
+}
+
 function App() {
-  const [output, setOutput] = useState('');
-
+  const [output, setOutput] = useState({ js: '', ty: '', cp: '', out: '' });
   const onEditorChange = useCallback(async (content: any) => {
-    const url = "http://localhost:5173/api/compileToJs";
-
     try {
-      const response = await fetch(url, {
-        method: 'POST', 
-        headers: {
-          'Content-Type': 'text/plain',
-        },
-        body: content,
-      });
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
-      const data = await response.json();
-      setOutput(beautify(data[0], { indent_size: 2 }));
-    } catch (error) {
-      console.error('There has been a problem with your fetch operation:', error);
+      const js = await compileTo("/compileToJs", content);
+      const ty = await compileTo("/type", content);
+      const cp = await compileTo("/compile", content);
+      const ret = await runJs(js[0]);
+      setOutput({js:beautify(js[0], { indent_size: 2 }), ty: ty[0], cp: cp[0], out: JSON.stringify(ret)});
+    } catch (e) {
+      console.log(e)
+      setOutput({js:'', ty: '', cp: '', out: ''});
     }
   }, []);
 
