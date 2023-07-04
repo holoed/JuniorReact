@@ -1,6 +1,7 @@
 import React from 'react';
 import { AppBar, Tabs, Tab, IconButton, makeStyles } from '@material-ui/core';
 import TabPanel from './TabPanel';
+import OutputTabPanel from './OutputPanel';
 
 // Styles for the SecondPane component
 const useStyles = makeStyles((theme) => ({
@@ -29,74 +30,32 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: '#f00', // Set the color of the selected indicator
     },
   })); 
-
-// add types for your props
-interface SecondPaneProps {
-    js: string, ty: string, cp: string, out: string 
+  
+  const SecondPane: React.FC<{ content: string }> = ({ content }) => {
+    const [value, setValue] = React.useState(0);
+    const classes = useStyles();
+  
+    const handleChange = (event: any, newValue: any) => {
+      setValue(newValue);
+    };
+  
+    return (
+      <div className="pane">
+        <AppBar position="static" className={classes.appBar}>
+          <Tabs value={value} onChange={handleChange}>
+            <Tab label={<div>Typed</div>} className={classes.tab} />
+            <Tab label={<div>Compiled</div>} className={classes.tab} />
+            <Tab label={<div>Js</div>} className={classes.tab} />
+            <Tab label={<div>Output</div>} className={classes.tab} />
+          </Tabs>
+        </AppBar>
+        <TabPanel value={value} index={0} content={content} apiEndpoint="api/type" />
+        <TabPanel value={value} index={1} content={content} apiEndpoint="api/compile" />
+        <TabPanel value={value} index={2} content={content} apiEndpoint="api/compileToJs" />
+        <OutputTabPanel value={value} index={3} content={content} apiEndpoint="api/compileToJs" />
+      </div>
+    );
   }
-
-// SecondPane: the component that contains the tabbed interface
-const SecondPane: React.FC<SecondPaneProps> = ({ js, ty, cp, out }) => {
-  const [value, setValue] = React.useState(0);
-  const classes = useStyles();
-
-  const handleChange = (event: any, newValue: any) => {
-    setValue(newValue);
-  };
-
-  return (
-    <div className="pane">
-      <AppBar position="static" className={classes.appBar}>
-        <Tabs value={value} onChange={handleChange}>
-          <Tab 
-            label={
-              <div>
-                Typed 
-              </div>
-            } 
-            className={classes.tab}
-          />
-          <Tab 
-            label={
-              <div>
-                Compiled
-              </div>
-            } 
-            className={classes.tab}
-          />
-          <Tab 
-            label={
-              <div>
-                Js 
-              </div>
-            } 
-            className={classes.tab}
-          />
-        <Tab 
-            label={
-              <div>
-                Output 
-              </div>
-            } 
-            className={classes.tab}
-          />
-        </Tabs>
-      </AppBar>
-      <TabPanel value={value} index={0}>
-        <pre>{ty}</pre>
-      </TabPanel>
-      <TabPanel value={value} index={1}>
-        <pre>{cp}</pre>
-      </TabPanel>
-      <TabPanel value={value} index={2}>
-         <pre>{js}</pre>
-      </TabPanel>
-      <TabPanel value={value} index={3}>
-         <pre id="compiledJs">{out}</pre>
-         <canvas id="canvas"></canvas>
-      </TabPanel>
-    </div>
-  );
-}
-
-export default SecondPane;
+  
+  export default SecondPane;
+  
