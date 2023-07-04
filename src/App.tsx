@@ -8,6 +8,18 @@ import { js as beautify } from 'js-beautify';
 import MenuBar from './components/MenuBar';
 import SecondPane from './components/SecondPane';
 
+function clearPanels() {
+  const elem = document.getElementById("compiledJs");
+  if (elem != null) elem.style.display = "none";
+
+  const canvas = document.getElementById("canvas");
+  if (canvas != null) {
+    canvas.style.zIndex = "2";
+    canvas.style.width  = '100%';
+    canvas.style.height = '100%';
+  }
+}
+
 async function compileTo(target: string, content: string) {
   const url = `api${target}`;
 

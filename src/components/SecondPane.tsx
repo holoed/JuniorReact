@@ -92,7 +92,8 @@ const SecondPane: React.FC<SecondPaneProps> = ({ content }) => {
          <pre>{content.js}</pre>
       </TabPanel>
       <TabPanel value={value} index={3}>
-         <pre>{content.out}</pre>
+         <pre id="compiledJs">{content.out}</pre>
+         <canvas id="canvas"></canvas>
       </TabPanel>
     </div>
   );
