@@ -55,18 +55,19 @@ async function runJs(jsCode: string) {
 }
 
 function App() {
-  const [output, setOutput] = useState({ js: '', ty: '', cp: '', out: '' });
+  const [js, setJs] = useState('');
+  const [ty, setTy] = useState('');
+  const [cp, setCp] = useState('');
+  const [out, setOut] = useState('');
   const onEditorChange = useCallback(async (content: any) => {
-    try {
       const js = await compileTo("/compileToJs", content);
+      setJs(beautify(js[0], { indent_size: 2 }));
       const ty = await compileTo("/type", content);
+      setTy(ty[0]);
       const cp = await compileTo("/compile", content);
+      setCp(cp[0])
       const ret = await runJs(js[0]);
-      setOutput({js:beautify(js[0], { indent_size: 2 }), ty: ty[0], cp: cp[0], out: JSON.stringify(ret)});
-    } catch (e) {
-      console.log(e)
-      setOutput({js:'', ty: '', cp: '', out: ''});
-    }
+      setOut(JSON.stringify(ret))
   }, []);
 
   return (
@@ -76,7 +77,7 @@ function App() {
         <div className="pane">
           <CodeEditor onChange={onEditorChange} />
         </div>
-        <SecondPane content={output} />
+        <SecondPane js={js} ty={ty} cp={cp} out={out} />
       </Split>
     </div>
   );
