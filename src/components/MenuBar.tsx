@@ -1,73 +1,86 @@
 import React from 'react';
-import { AppBar, Toolbar, Typography, MenuList, MenuItem, Popover } from '@material-ui/core';
+import { AppBar, Toolbar, Typography, MenuList, MenuItem, Popover, makeStyles } from '@material-ui/core';
+
+const useStyles = makeStyles((theme) => ({
+  appBar: {
+    backgroundColor: '#333',
+  },
+  toolbar: {
+    minHeight: '25px',
+  },
+  menuText: {
+    fontSize: '14px',
+    color: '#bbb',
+    marginRight: '15px',
+    cursor: 'pointer',
+    '&:hover': {
+      color: '#fff',
+    },
+  },
+  popOver: {
+    marginTop: theme.spacing(1),
+  },
+  menuList: {
+    backgroundColor: '#333',
+    width: '200px',
+  },
+  menuItem: {
+    fontSize: '14px',
+    color: '#bbb',
+    '&:hover': {
+      color: '#fff',
+      backgroundColor: '#555',
+    },
+  },
+}));
 
 export default function MenuBar() {
+  const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorEl);
 
-  const handleClick = (event : any) => {
-    setAnchorEl(event.currentTarget);
+  const handleClick = (menuName) => (event) => {
+    setAnchorEl({anchor: event.currentTarget, menu: menuName});
   };
 
   const handleClose = () => {
     setAnchorEl(null);
   };
 
-  const appBarStyle = {
-    backgroundColor: '#333', // Change to desired color
-    height: '30px', // Adjust based on preference
-  };
+  const open = Boolean(anchorEl);
 
-  const toolbarStyle = {
-    minHeight: '30px', // This ensures the toolbar is only 30px tall
-  };
-
-  const typographyStyle = {
-    fontSize: '12px', // Adjust based on preference
-    marginRight: '15px',
-    cursor: 'pointer',
-    lineHeight: '30px', // Centers the text vertically
+  const menus = {
+    'File': ['New File', 'Open File', 'Save File'],
+    'Edit': ['Undo', 'Redo', 'Cut', 'Copy', 'Paste'],
+    'View': ['Toggle Full Screen', 'Zoom In', 'Zoom Out'],
+    'Run': ['Start Debugging', 'Stop Debugging', 'Restart Debugging'],
+    'Help': ['Welcome', 'Interactive Playground', 'Documentation'],
   };
 
   return (
-    <AppBar position="static" style={appBarStyle}>
-      <Toolbar style={toolbarStyle}>
-        <Typography 
-          variant="h6" 
-          onClick={handleClick}
-          style={typographyStyle}
-        >
-          File
-        </Typography>
-        <Popover
-          open={open}
-          anchorEl={anchorEl}
-          onClose={handleClose}
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'center',
-          }}
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'center',
-          }}
-        >
-          <MenuList>
-            <MenuItem onClick={handleClose}>New File</MenuItem>
-            <MenuItem onClick={handleClose}>Open File</MenuItem>
-            <MenuItem onClick={handleClose}>Save File</MenuItem>
-          </MenuList>
-        </Popover>
-        <Typography variant="h6" style={typographyStyle}>
-          Edit
-        </Typography>
-        <Typography variant="h6" style={typographyStyle}>
-          View
-        </Typography>
-        <Typography variant="h6" style={typographyStyle}>
-          Run
-        </Typography>
-        {/* Repeat for additional top bar items */}
+    <AppBar position="static" className={classes.appBar}>
+      <Toolbar className={classes.toolbar}>
+        {Object.keys(menus).map((menuName) => (
+          <React.Fragment key={menuName}>
+            <Typography variant="h6" onClick={handleClick(menuName)} className={classes.menuText}>
+              {menuName}
+            </Typography>
+            <Popover
+              open={open && anchorEl?.menu === menuName}
+              anchorEl={anchorEl?.anchor}
+              onClose={handleClose}
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'left', }}
+              transformOrigin={{ vertical: 'top', horizontal: 'left', }}
+            >
+              <MenuList className={classes.menuList}>
+                {menus[menuName].map((item) => (
+                  <MenuItem onClick={handleClose} className={classes.menuItem} key={item}>
+                    {item}
+                  </MenuItem>
+                ))}
+              </MenuList>
+            </Popover>
+          </React.Fragment>
+        ))}
       </Toolbar>
     </AppBar>
   );
