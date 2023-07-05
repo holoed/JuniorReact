@@ -4,7 +4,6 @@ import React, { useState, useCallback } from 'react';
 import Split from 'react-split';
 import './App.css';
 import CodeEditor from './components/CodeEditor';
-import { js as beautify } from 'js-beautify';
 import MenuBar from './components/MenuBar';
 import SecondPane from './components/SecondPane';
 

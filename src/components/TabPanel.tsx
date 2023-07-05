@@ -1,43 +1,10 @@
-import React, { useEffect, useState }  from 'react';
-import { Box, Typography, makeStyles } from '@material-ui/core';
-
-function clearPanels() {
-  const elem = document.getElementById("compiledJs");
-  if (elem != null) elem.style.display = "none";
-
-  const canvas = document.getElementById("canvas");
-  if (canvas != null) {
-    canvas.style.zIndex = "2";
-    canvas.style.width  = '100%';
-    canvas.style.height = '100%';
-  }
-  const plotlyChart = document.getElementById("plotlyChart");
-  if (plotlyChart != null) {
-    plotlyChart.style.width  = '100%';
-    plotlyChart.style.height = '100%';
-  }
-}
-
-async function runJs(jsCode: string) {
-  const response = await fetch("api/libJs")
-  const libCodeJson = await response.text();
-  const script = "(function() {\n\n" + JSON.parse(libCodeJson) + 
-  "\n\n" + jsCode.replace("const main = ", "return ") + 
-  "\n\n})();"
-  const scriptBase64 = window.btoa(jsCode);
-  const ret = eval(`const codeBase64 = "${scriptBase64}";\n\n` + script);
-  return ret;
-}
-
-const useStyles = makeStyles((theme) => ({
-  scrollableContent: {
-    maxWidth: '100%', // take up full width
-    maxHeight: 'calc(100vh - 64px)', // or the height you prefer
-    overflowY: 'auto', // vertical scrolling
-    overflowX: 'auto', // no horizontal scrolling
-  }
-}));
-
+import { useEffect, useState, useRef } from 'react';
+import { EditorState, basicSetup } from '@codemirror/basic-setup';
+import { EditorView } from '@codemirror/view';
+import { oneDark } from '@codemirror/theme-one-dark';
+import { StreamLanguage } from "@codemirror/language";
+import { haskell } from "@codemirror/legacy-modes/mode/haskell";
+import { js as beautify } from 'js-beautify';
 
 interface TabPanelProps {
   content: string;
@@ -47,28 +14,51 @@ interface TabPanelProps {
 }
 
 const TabPanel: React.FC<TabPanelProps> = ({ content, value, index, apiEndpoint }) => {
-  const classes = useStyles();
+  const editorRef = useRef<HTMLDivElement>(null);
   const [tabContent, setTabContent] = useState('');
-  
+
   useEffect(() => {
-    if (value === index) {
-      fetch(apiEndpoint, {
-        method: 'POST', 
-        headers: {
-          'Content-Type': 'text/plain',
-        }, 
-        body: content, 
-      }).then(res => res.json())
-      .then(result => setTabContent(result[0]));
-    }
+    fetch(apiEndpoint, {
+      method: 'POST', 
+      headers: {
+        'Content-Type': 'text/plain',
+      }, 
+      body: content, 
+    }).then(res => res.json())
+    .then(result => setTabContent(index == 2 ? beautify(result[0]) : result[0]));
   }, [value, index, content, apiEndpoint]);
+
+  useEffect(() => {
+    if (!editorRef.current || value !== index) return;
+
+    const startState = EditorState.create({
+      doc: tabContent,
+      extensions: [
+        basicSetup,
+        oneDark,
+        StreamLanguage.define(haskell),
+      ],
+    });
+
+    const view = new EditorView({
+      state: startState,
+      parent: editorRef.current,
+    });
+
+    return () => {
+      view.destroy();
+    };
+  }, [tabContent, index, value]);
 
   return (
     <div role="tabpanel" hidden={value !== index}>
       {value === index && (
-        <Box p={2}> {/* added padding here */}
-          <Typography><pre className={classes.scrollableContent}>{tabContent}</pre></Typography>
-        </Box>
+        <div ref={editorRef} className="cm-editor" style={{
+          height: 'calc(100vh - 64px)',
+          overflow: 'scroll',
+          display: 'grid',
+          backgroundColor: '#282c34', /* oneDark background color */
+        }} />
       )}
     </div>
   );
