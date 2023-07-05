@@ -31,14 +31,11 @@ async function runJs(jsCode: string) {
 
 const useStyles = makeStyles((theme) => ({
   scrollableContent: {
-    width: '100%', // take up full width
+    maxWidth: '100%', // take up full width
     maxHeight: 'calc(100vh - 64px)', // or the height you prefer
     overflowY: 'auto', // vertical scrolling
     overflowX: 'auto', // no horizontal scrolling
-  },
-  panel: {
-    flex: 1
-  },
+  }
 }));
 
 
@@ -67,10 +64,10 @@ const TabPanel: React.FC<TabPanelProps> = ({ content, value, index, apiEndpoint 
   }, [value, index, content, apiEndpoint]);
 
   return (
-    <div role="tabpanel" hidden={value !== index} className={classes.panel}>
+    <div role="tabpanel" hidden={value !== index}>
       {value === index && (
-        <Box p={2} className={classes.scrollableContent}> {/* added padding here */}
-          <Typography><pre>{tabContent}</pre></Typography>
+        <Box p={2}> {/* added padding here */}
+          <Typography><pre className={classes.scrollableContent}>{tabContent}</pre></Typography>
         </Box>
       )}
     </div>
