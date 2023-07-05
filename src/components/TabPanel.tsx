@@ -34,11 +34,10 @@ const useStyles = makeStyles((theme) => ({
     width: '100%', // take up full width
     maxHeight: 'calc(100vh - 64px)', // or the height you prefer
     overflowY: 'auto', // vertical scrolling
-    overflowX: 'hidden', // no horizontal scrolling
+    overflowX: 'auto', // no horizontal scrolling
   },
   panel: {
-    flex: 1,
-    overflow: 'auto', // to enable scrolling if content overflows
+    flex: 1
   },
 }));
 
