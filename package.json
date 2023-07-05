@@ -18,12 +18,16 @@
     "@material-ui/core": "^4.12.4",
     "@material-ui/icons": "^4.11.3",
     "@types/js-beautify": "^1.13.3",
+    "body-parser": "^1.20.2",
     "js-beautify": "^1.14.8",
+    "koa-bodyparser": "^4.4.1",
+    "node-cache": "^5.1.2",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
     "react-split": "^2.0.14"
   },
   "devDependencies": {
+    "@types/koa-bodyparser": "^4.3.10",
     "@types/react": "^16.9.53",
     "@types/react-dom": "^16.9.8",
     "@vitejs/plugin-react": "^3.1.0",
