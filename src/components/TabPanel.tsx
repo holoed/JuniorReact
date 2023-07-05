@@ -11,6 +11,11 @@ function clearPanels() {
     canvas.style.width  = '100%';
     canvas.style.height = '100%';
   }
+  const plotlyChart = document.getElementById("plotlyChart");
+  if (plotlyChart != null) {
+    plotlyChart.style.width  = '100%';
+    plotlyChart.style.height = '100%';
+  }
 }
 
 async function runJs(jsCode: string) {
@@ -26,10 +31,17 @@ async function runJs(jsCode: string) {
 
 const useStyles = makeStyles((theme) => ({
   scrollableContent: {
+    width: '100%', // take up full width
     maxHeight: 'calc(100vh - 64px)', // or the height you prefer
-    overflowY: 'auto', // enables vertical scrolling
+    overflowY: 'auto', // vertical scrolling
+    overflowX: 'hidden', // no horizontal scrolling
+  },
+  panel: {
+    flex: 1,
+    overflow: 'auto', // to enable scrolling if content overflows
   },
 }));
+
 
 interface TabPanelProps {
   content: string;
@@ -56,9 +68,9 @@ const TabPanel: React.FC<TabPanelProps> = ({ content, value, index, apiEndpoint 
   }, [value, index, content, apiEndpoint]);
 
   return (
-    <div role="tabpanel" hidden={value !== index}>
+    <div role="tabpanel" hidden={value !== index} className={classes.panel}>
       {value === index && (
-        <Box>
+        <Box p={2} className={classes.scrollableContent}> {/* added padding here */}
           <Typography><pre>{tabContent}</pre></Typography>
         </Box>
       )}

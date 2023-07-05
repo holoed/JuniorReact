@@ -42,6 +42,10 @@ const useStyles = makeStyles((theme) => ({
     maxHeight: 'calc(100vh - 64px)', // or the height you prefer
     overflowY: 'auto', // enables vertical scrolling
   },
+  panel: {
+    flex: 1,
+    overflow: 'auto', // to enable scrolling if content overflows
+  },
 }));
 
 interface OutputTabPanelProps {
@@ -73,10 +77,10 @@ const OutputTabPanel: React.FC<OutputTabPanelProps> = ({ content, value, index, 
   }, [value, index, content, apiEndpoint]);
 
   return (
-    <div role="tabpanel" hidden={value !== index}>
+    <div role="tabpanel" hidden={value !== index} className={classes.panel}>
             <div id="compiledJs">{tabContent}</div> 
             <canvas id="canvas"></canvas>
-            <div id="plotlyChart"></div>
+            <div id="plotlyChart" style={{display:'none', width:'100%', height:'100%'}}></div>
     </div>
   );
 }

@@ -53,4 +53,18 @@
   width: 30px; /* specify your desired width */
 }
 
+.cm-editor::-webkit-scrollbar {
+  width: 8px;
+}
+
+.cm-editor::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.cm-editor::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+
 

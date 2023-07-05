@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
     };
   
     return (
-      <div className="pane">
+      <div className="pane" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
         <AppBar position="static" className={classes.appBar}>
           <Tabs value={value} onChange={handleChange}>
             <Tab label={<div>Typed</div>} className={classes.tab} />

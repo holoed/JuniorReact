@@ -47,8 +47,9 @@ function CodeEditor({ onChange }: CodeEditorProps) {
       ref={editorRef}
       className="cm-editor"
       style={{
-        height: '100%',
+        height: 'calc(100vh - 32px)',
         display: 'grid',
+        overflow: 'auto',
         backgroundColor: '#282c34', /* oneDark background color */
       }}
     />
