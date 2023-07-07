@@ -1,15 +1,20 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { basicSetup } from '@codemirror/basic-setup';
-import { EditorState, Transaction } from '@codemirror/state';
-import { EditorView, keymap } from '@codemirror/view';
+import { EditorState, StateField, StateEffect } from '@codemirror/state';
+import { EditorView, keymap, Decoration, hoverTooltip, DecorationSet } from '@codemirror/view';
 import { defaultKeymap } from '@codemirror/commands';
 import { oneDark } from '@codemirror/theme-one-dark';
 import {syntaxTree, StreamLanguage} from "@codemirror/language"
 import {haskell} from "@codemirror/legacy-modes/mode/haskell"
-
-import {Tooltip, hoverTooltip} from "@codemirror/view"
+import { Diagnostic, setDiagnostics } from '@codemirror/lint';
 
 var dictionary: any = {}
+
+const tooltipTheme = EditorView.theme({
+  ".cm-tooltip-lint": {
+    backgroundColor: "#333842", // VSCode's tooltip background color
+  }
+});
 
 export const wordHover = hoverTooltip((view, pos, side) => {
   let line = view.state.doc.lineAt(pos);
@@ -47,6 +52,7 @@ interface CodeEditorProps {
 
 function CodeEditor({ onChange }: CodeEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null);
+  const viewRef = useRef<EditorView | null>(null);
 
   async function updateTypes(code: string) {
     const response = await  fetch("api/type", {
@@ -58,16 +64,49 @@ function CodeEditor({ onChange }: CodeEditorProps) {
     })
   
     if (response.ok) {
-      const typesData = await response.json();
+      const json = await response.json();
+      let view = viewRef.current!;
       dictionary = {};
-      typesData[1].forEach((sym: any) => {
+      if (json[1] != undefined && Array.isArray(json[1])) {
+        const obj = json[1];
+        dictionary = {};
+        obj.forEach(sym => {
             dictionary["(" +
                        sym.name.loc.line + "," + 
                        sym.name.loc.column + "," + 
                        sym.name.loc.len + "," +
                        sym.name.txt + 
                        ")"] = sym;
-                    });   
+        }); 
+        view.dispatch(setDiagnostics(view.state, []));  
+      } else {
+          const obj = json;
+          const loc = obj.loc;
+          if (loc != null) {
+            const from = { line: loc.line, ch: loc.column };
+            const to = { line: loc.line, ch: loc.column + loc.len - 1 };        
+            
+            // Get the Text object of the document
+            const docText = view.state.doc;
+
+            // Calculate the absolute position
+            // Remember that the line method expects a 0-based line number
+            const startPos: number = docText.line(from.line).from + from.ch;
+            const endPos: number = docText.line(to.line).from + to.ch;
+
+            const diagnostics: Diagnostic[] = [];
+
+            diagnostics.push({
+              from: startPos - 1,
+              to: endPos,
+              severity: 'error',  // or 'warning', 'info', 'hint'
+              message: obj.txt,
+            });
+            
+            // Attach diagnostics to the document
+            view.dispatch(setDiagnostics(view.state, diagnostics));
+          }
+      }
     }
   }
 
@@ -88,7 +127,8 @@ function CodeEditor({ onChange }: CodeEditorProps) {
             onChange(code);
           }
         }),
-        wordHover
+        wordHover,
+        tooltipTheme
       ],
     });
 
@@ -96,6 +136,9 @@ function CodeEditor({ onChange }: CodeEditorProps) {
       state: startState,
       parent: editorRef.current,
     });
+
+    // Store the EditorView instance in the ref
+    viewRef.current = view;
 
     return () => {
       view.destroy();
