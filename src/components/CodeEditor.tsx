@@ -13,7 +13,21 @@ var dictionary: any = {}
 const tooltipTheme = EditorView.theme({
   ".cm-tooltip-lint": {
     backgroundColor: "#333842", // VSCode's tooltip background color
-  }
+    padding: "0px",
+    color: "#ffffff", // VSCode's tooltip text color
+    borderRadius: "0px",
+    boxShadow: "2px 2px 10px rgba(0,0,0,0.5)",
+    fontFamily: "'Courier New', monospace", // monospace font for tooltip
+    fontSize: "12px", // reduce font size
+  },
+  ".cm-tooltip-section": {
+    border: "0px",
+    padding: "0px 3px 3px 3px",
+  },
+  ".cm-diagnostic-error": {
+    border: "0px",
+    padding: "0px 3px 3px 3px",
+  },
 });
 
 export const wordHover = hoverTooltip((view, pos, side) => {
